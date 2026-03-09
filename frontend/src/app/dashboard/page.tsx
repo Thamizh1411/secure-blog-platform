@@ -96,18 +96,22 @@ export default function DashboardPage() {
   );
 }
 
-  async function handleTogglePublish(blog: any) {
-    const updated = await apiFetch(`/blogs/${blog.id}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        isPublished: !blog.isPublished,
-      }),
-    });
+ async function handleTogglePublish(blog: any) {
+  const updated = await apiFetch(`/blogs/${blog.id}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      isPublished: !blog.isPublished,
+    }),
+  });
 
-    setBlogs((prev) =>
-      prev.map((b) => (b.id === blog.id ? updated : b))
-    );
-  }
+  setBlogs((prev) =>
+    prev.map((b) =>
+      b.id === blog.id
+        ? { ...b, isPublished: updated.isPublished }
+        : b
+    )
+  );
+}
 
   async function handleLike(blogId: string) {
     const res = await apiFetch(`/blogs/${blogId}/like`, {
