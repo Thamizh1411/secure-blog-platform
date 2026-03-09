@@ -21,7 +21,7 @@ export default function DashboardPage() {
 
   async function fetchBlogs() {
     try {
-      const data = await apiFetch("/blogs");
+      const data = await apiFetch("/blogs/me");
       setBlogs(data);
     } catch (err: any) {
       setError(err.message);
