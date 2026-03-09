@@ -23,8 +23,14 @@ export default function RegisterPage() {
         body: JSON.stringify({ email, password }),
       });
 
+      // save token
       setToken(data.access_token);
-      router.push("/dashboard");
+
+      // wait briefly to ensure token is stored
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 100);
+
     } catch (err: any) {
       setError(err.message);
     }
