@@ -8,7 +8,10 @@ async function bootstrap() {
 
   // ✅ Enable CORS
   app.enableCors({
-    origin: ['http://localhost:3000'], // frontend port
+    origin: [
+      'http://localhost:3000',
+      'https://secure-blog-platform-lovat.vercel.app',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -33,6 +36,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3001); // Backend port
+  await app.listen(3001);
 }
 bootstrap();
