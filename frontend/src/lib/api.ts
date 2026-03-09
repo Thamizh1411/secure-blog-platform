@@ -1,5 +1,5 @@
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export async function apiFetch(
   endpoint: string,
@@ -9,7 +9,9 @@ export async function apiFetch(
     typeof window !== "undefined"
       ? localStorage.getItem("token")
       : null;
-console.log("API_BASE =", API_BASE);
+
+  console.log("API_BASE =", API_BASE);
+
   const res = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
     headers: {
