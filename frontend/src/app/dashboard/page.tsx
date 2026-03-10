@@ -97,20 +97,22 @@ export default function DashboardPage() {
 }
 
 async function handleTogglePublish(blog: any) {
-  await apiFetch(`/blogs/${blog.id}`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      isPublished: !blog.isPublished,
-    }),
-  });
+  const newStatus = !blog.isPublished;
 
   setBlogs((prev) =>
     prev.map((b) =>
       b.id === blog.id
-        ? { ...b, isPublished: !b.isPublished }
+        ? { ...b, isPublished: newStatus }
         : b
     )
   );
+
+  await apiFetch(`/blogs/${blog.id}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      isPublished: newStatus,
+    }),
+  });
 }
 
   async function handleLike(blogId: string) {
