@@ -12,13 +12,13 @@ export default function DashboardPage() {
   const [content, setContent] = useState("");
   const [blogs, setBlogs] = useState<any[]>([]);
   const [error, setError] = useState("");
-
   const [user, setUser] = useState<any>(null);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
 
+  // Fetch user blogs
   async function fetchBlogs() {
     try {
       const data = await apiFetch("/blogs/me");
@@ -28,6 +28,7 @@ export default function DashboardPage() {
     }
   }
 
+  // Fetch logged user
   async function fetchProfile() {
     try {
       const data = await apiFetch("/auth/profile");
@@ -40,6 +41,7 @@ export default function DashboardPage() {
     fetchProfile();
   }, []);
 
+  // Create blog
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
 
@@ -57,6 +59,7 @@ export default function DashboardPage() {
     }
   }
 
+  // Edit blog
   function handleEditClick(blog: any) {
     setEditingId(blog.id);
     setEditTitle(blog.title);
@@ -73,76 +76,59 @@ export default function DashboardPage() {
     });
 
     setBlogs((prev) =>
-      prev.map((blog) =>
-        blog.id === blogId ? updatedBlog : blog
-      )
+      prev.map((blog) => (blog.id === blogId ? updatedBlog : blog))
     );
 
     setEditingId(null);
   }
 
+  // Delete blog
   async function handleDelete(blogId: string) {
+    const confirmDelete = confirm("Are you sure you want to delete this blog?");
+    if (!confirmDelete) return;
 
-  const confirmDelete = confirm("Are you sure you want to delete this blog?");
+    await apiFetch(`/blogs/${blogId}`, {
+      method: "DELETE",
+    });
 
-  if (!confirmDelete) return;
+    setBlogs((prev) => prev.filter((b) => b.id !== blogId));
+  }
 
-  await apiFetch(`/blogs/${blogId}`, {
-    method: "DELETE",
-  });
+  // Publish / Unpublish
+  async function handleTogglePublish(blog: any) {
+    const newStatus = !blog.isPublished;
 
-  setBlogs((prev) =>
-    prev.filter((b) => b.id !== blogId)
-  );
-}
+    // instant UI update
+    setBlogs((prev) =>
+      prev.map((b) =>
+        b.id === blog.id ? { ...b, isPublished: newStatus } : b
+      )
+    );
 
-async function handleTogglePublish(blog: any) {
-  const newStatus = !blog.isPublished;
+    await apiFetch(`/blogs/${blog.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        isPublished: newStatus,
+      }),
+    });
+  }
 
-  setBlogs((prev) =>
-    prev.map((b) =>
-      b.id === blog.id
-        ? { ...b, isPublished: newStatus }
-        : b
-    )
-  );
-
-  await apiFetch(`/blogs/${blog.id}`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      isPublished: newStatus,
-    }),
-  });
-}
-
-  async function handleLike(blogId: string) {
-    const res = await apiFetch(`/blogs/${blogId}/like`, {
+  // Like toggle
+  async function handleLikeToggle(blog: any) {
+    const res = await apiFetch(`/blogs/${blog.id}/like`, {
       method: "POST",
     });
 
     setBlogs((prev) =>
       prev.map((b) =>
-        b.id === blogId
+        b.id === blog.id
           ? { ...b, totalLikes: res.totalLikes }
           : b
       )
     );
   }
 
-  async function handleUnlike(blogId: string) {
-    const res = await apiFetch(`/blogs/${blogId}/like`, {
-      method: "DELETE",
-    });
-
-    setBlogs((prev) =>
-      prev.map((b) =>
-        b.id === blogId
-          ? { ...b, totalLikes: res.totalLikes }
-          : b
-      )
-    );
-  }
-
+  // Logout
   function handleLogout() {
     removeToken();
     router.push("/login");
@@ -153,9 +139,7 @@ async function handleTogglePublish(blog: any) {
 
       {/* HEADER */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">
-          Dashboard
-        </h1>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
 
         <button
           onClick={handleLogout}
@@ -166,18 +150,11 @@ async function handleTogglePublish(blog: any) {
       </div>
 
       {/* CREATE BLOG */}
-      <form
-        onSubmit={handleCreate}
-        className="card space-y-3"
-      >
-        <h2 className="text-lg font-semibold">
-          Create Blog
-        </h2>
+      <form onSubmit={handleCreate} className="card space-y-3">
+        <h2 className="text-lg font-semibold">Create Blog</h2>
 
         {error && (
-          <p className="text-red-500 text-sm">
-            {error}
-          </p>
+          <p className="text-red-500 text-sm">{error}</p>
         )}
 
         <input
@@ -194,9 +171,7 @@ async function handleTogglePublish(blog: any) {
           className="input"
           rows={4}
           value={content}
-          onChange={(e) =>
-            setContent(e.target.value)
-          }
+          onChange={(e) => setContent(e.target.value)}
           required
         />
 
@@ -208,21 +183,14 @@ async function handleTogglePublish(blog: any) {
       {/* BLOG LIST */}
       <div className="space-y-4">
 
-        <h2 className="text-xl font-semibold">
-          Your Blogs
-        </h2>
+        <h2 className="text-xl font-semibold">Your Blogs</h2>
 
         {blogs.length === 0 && (
-          <p className="text-gray-500">
-            No blogs yet.
-          </p>
+          <p className="text-gray-500">No blogs yet.</p>
         )}
 
         {blogs.map((blog) => (
-          <div
-            key={blog.id}
-            className="card space-y-3"
-          >
+          <div key={blog.id} className="card space-y-3">
 
             <p
               className={`text-xs font-semibold ${
@@ -231,9 +199,7 @@ async function handleTogglePublish(blog: any) {
                   : "text-red-600"
               }`}
             >
-              {blog.isPublished
-                ? "Published"
-                : "Draft"}
+              {blog.isPublished ? "Published" : "Draft"}
             </p>
 
             {editingId === blog.id ? (
@@ -241,33 +207,25 @@ async function handleTogglePublish(blog: any) {
                 <input
                   className="input"
                   value={editTitle}
-                  onChange={(e) =>
-                    setEditTitle(e.target.value)
-                  }
+                  onChange={(e) => setEditTitle(e.target.value)}
                 />
 
                 <textarea
                   className="input"
                   value={editContent}
-                  onChange={(e) =>
-                    setEditContent(e.target.value)
-                  }
+                  onChange={(e) => setEditContent(e.target.value)}
                 />
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() =>
-                      handleUpdate(blog.id)
-                    }
+                    onClick={() => handleUpdate(blog.id)}
                     className="btn btn-primary"
                   >
                     Save
                   </button>
 
                   <button
-                    onClick={() =>
-                      setEditingId(null)
-                    }
+                    onClick={() => setEditingId(null)}
                     className="btn btn-secondary"
                   >
                     Cancel
@@ -290,56 +248,37 @@ async function handleTogglePublish(blog: any) {
 
             <div className="flex flex-wrap gap-2">
 
-              {user &&
-                blog.user?.id === user.id && (
-                  <>
-                    <button
-                      onClick={() =>
-                        handleEditClick(blog)
-                      }
-                      className="btn btn-secondary"
-                    >
-                      Edit
-                    </button>
+              {user && blog.user?.id === user.id && (
+                <>
+                  <button
+                    onClick={() => handleEditClick(blog)}
+                    className="btn btn-secondary"
+                  >
+                    Edit
+                  </button>
 
-                    <button
-                      onClick={() =>
-                        handleDelete(blog.id)
-                      }
-                      className="btn btn-danger"
-                    >
-                      Delete
-                    </button>
+                  <button
+                    onClick={() => handleDelete(blog.id)}
+                    className="btn btn-danger"
+                  >
+                    Delete
+                  </button>
 
-                    <button
-                      onClick={() =>
-                        handleTogglePublish(blog)
-                      }
-                      className="btn btn-primary"
-                    >
-                      {blog.isPublished
-                        ? "Unpublish"
-                        : "Publish"}
-                    </button>
-                  </>
-                )}
+                  <button
+                    onClick={() => handleTogglePublish(blog)}
+                    className="btn btn-primary"
+                  >
+                    {blog.isPublished ? "Unpublish" : "Publish"}
+                  </button>
+                </>
+              )}
 
+              {/* Like toggle */}
               <button
-                onClick={() =>
-                  handleLike(blog.id)
-                }
+                onClick={() => handleLikeToggle(blog)}
                 className="btn btn-primary"
               >
-                Like
-              </button>
-
-              <button
-                onClick={() =>
-                  handleUnlike(blog.id)
-                }
-                className="btn btn-secondary"
-              >
-                Unlike
+                ❤️ Like
               </button>
 
             </div>
