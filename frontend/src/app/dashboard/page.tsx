@@ -96,24 +96,27 @@ export default function DashboardPage() {
   );
 }
 
- async function handleTogglePublish(blog: any) {
+async function handleTogglePublish(blog: any) {
+  try {
+    const newStatus = !blog.isPublished;
 
-  const newStatus = !blog.isPublished;
+    await apiFetch(`/blogs/${blog.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        isPublished: newStatus,
+      }),
+    });
 
-  await apiFetch(`/blogs/${blog.id}`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      isPublished: newStatus,
-    }),
-  });
-
-  setBlogs((prev) =>
-    prev.map((b) =>
-      b.id === blog.id
-        ? { ...b, isPublished: newStatus }
-        : b
-    )
-  );
+    setBlogs((prev) =>
+      prev.map((b) =>
+        b.id === blog.id
+          ? { ...b, isPublished: newStatus }
+          : b
+      )
+    );
+  } catch (err) {
+    alert("Failed to update publish status");
+  }
 }
 
   async function handleLike(blogId: string) {
