@@ -1,4 +1,4 @@
-# Vlinder – Secure Blog Platform
+# Secure Blog Platform
 
 ## Overview
 
