@@ -275,7 +275,7 @@ These changes would allow the platform to handle significantly higher traffic wh
 
 Potential enhancements include:
 
-* Background jobs for automatic blog summaries (Done in Rival Tool)
+* Background jobs for automatic blog summaries (AI Blog Analyzer deployed in Market Place)
 * Real-time notifications for comments and likes
 * Improved search and filtering for blog discovery
 
