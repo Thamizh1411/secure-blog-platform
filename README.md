@@ -2,7 +2,7 @@
 
 ## Overview
 
-Vlinder is a full-stack secure blogging platform that allows users to create and publish blog posts while also providing a public feed for readers to explore content.
+Secure blogging platform that allows users to create and publish blog posts while also providing a public feed for readers to explore content.
 
 The goal of this project is to demonstrate a clean architecture across both frontend and backend while implementing secure authentication, efficient database access, and scalable API design.
 
