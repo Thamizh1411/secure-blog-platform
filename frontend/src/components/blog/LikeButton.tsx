@@ -61,9 +61,13 @@ export default function LikeButton({ blogId, initialLikes }: Props) {
     <>
       <button
         onClick={toggleLike}
-        className="px-3 py-1 border rounded text-sm hover:bg-gray-100"
+        className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+          liked 
+            ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.2)]' 
+            : 'bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10'
+        }`}
       >
-        👍 {likes}
+        <span className={liked ? 'scale-110 transition-transform' : ''}>👍</span> {likes}
       </button>
 
       <AuthRequiredModal

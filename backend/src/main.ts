@@ -8,10 +8,7 @@ async function bootstrap() {
 
   // ✅ Enable CORS
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'https://secure-blog-platform-lovat.vercel.app',
-    ],
+    origin: true, // Allow all origins for local development
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

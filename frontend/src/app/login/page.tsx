@@ -36,50 +36,52 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-[calc(100vh-120px)] flex items-center justify-center">
 
       <form
         onSubmit={handleSubmit}
-        className="card w-[380px] space-y-4"
+        className="card w-[380px] space-y-6 animate-in fade-in zoom-in-95 duration-300"
       >
 
-        <h1 className="text-2xl font-bold text-center">
-          Login
+        <h1 className="text-3xl font-bold text-center text-slate-100">
+          Welcome Back
         </h1>
 
         {error && (
-          <p className="text-red-500 text-sm">
+          <p className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm text-center">
             {error}
           </p>
         )}
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="input"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <div className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email Address"
+            className="input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="input"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+          <input
+            type="password"
+            placeholder="Password"
+            className="input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
 
-        <button className="btn btn-primary w-full">
+        <button className="btn btn-primary w-full py-2.5">
           Login
         </button>
 
-        <p className="text-sm text-center text-gray-600">
+        <p className="text-sm text-center text-slate-400">
           Don't have an account?{" "}
           <Link
             href="/register"
-            className="text-blue-600 font-medium"
+            className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
           >
             Register
           </Link>
